@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نتائج الطلاب</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        #logo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 20px auto;
+            animation: pulse 2s infinite, spin 3s infinite linear, moveSides 5s infinite alternate, fallDown 2s forwards; /* إضافة الحركتين */
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); } /* تعديل الدوران ليكون باتجاه واحد فقط */
+        }
+
+        @keyframes moveSides {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        @keyframes fallDown {
+            0% { transform: translateY(-50px); } /* يتحرك لأعلى */
+            100% { transform: translateY(0); } /* ثم يسقط */
+        }
+
+        h1 {
+            margin: 20px;
+            font-size: 24px;
+            transition: opacity 1s;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1 span {
+            display: inline-block;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #sadFace {
+            width: 50px; /* حجم الصورة */
+            height: 50px; /* حجم الصورة */
+            display: none;
+        }
+
+        #searchForm {
+            margin: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #searchForm input {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #searchForm button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #searchForm button:hover {
+            background-color: #45a049;
+        }
+
+        #resultTable {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #resultTable th, #resultTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #resultTable th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: green;
+            font-weight: bold;
+            font-size: 18px;
+            animation: glowGreen 1s infinite;
+        }
+
+        .fail {
+            background-color: #f8d7da;
+            color: red;
+            font-weight: bold;
+            font-size: 18px;
+            animation: glowRed 1s infinite;
+        }
+
+        @keyframes glowGreen {
+            0% { box-shadow: 0 0 10px #4CAF50; }
+            50% { box-shadow: 0 0 20px #4CAF50; }
+            100% { box-shadow: 0 0 10px #4CAF50; }
+        }
+
+        @keyframes glowRed {
+            0% { box-shadow: 0 0 10px red; }
+            50% { box-shadow: 0 0 20px red; }
+            100% { box-shadow: 0 0 10px red; }
+        }
+
+        #celebration, #failureMessage {
+            display: none;
+            margin: 20px;
+        }
+
+        #celebration h2 {
+            color: green;
+            font-weight: bold;
+            position: relative;
+        }
+
+        @keyframes bubble {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-200px); opacity: 0; }
+        }
+
+        #celebration .bubble {
+            width: 10px;
+            height: 10px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            animation: bubble 3s infinite;
+        }
+
+        #failureMessage h2 {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* النص المتحرك بسرعة دون توقف */
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            animation: typing 10s steps(30) infinite; /* السرعة والتكرار */
+            color: #170099; /* اللون الذهبي */
+            font-size: 20px; /* حجم الخط 20 بكسل */
+        }
+
+        @keyframes typing {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); } /* حركة مستمرة */
+        }
+    </style>
+</head>
+<body>
+    <img id="logo" src="ed.jpg" alt="شعار الموقع">
+    <h1><span>نتيجة الطالب لعام 2025</span></h1>
+    <img id="sadFace" src="smile.jpg" alt="سمايل حزين"> <!-- استخدام الصورة هنا -->
+
+    <div class="typing-effect">النتائج الامتحانية لدورة 2025</div> <!-- النص المتحرك بسرعة -->
+
+    <div id="searchForm" class="content">
+        <input type="text" id="studentCode" placeholder="أدخل كود الطالب">
+        <button onclick="searchStudent()">بحث</button>
+    </div>
+
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>اسم الطالب</th>
+                <th>كود الطالب</th>
+                <th>نوع الشهادة</th>
+                <th>المجموع</th>
+                <th>المعدل</th>
+                <th>النتيجة</th>
+            </tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+    </table>
+
+    <div id="celebration">
+        <h2>مبروك! لقد نجحت</h2>
+        <div class="bubble" style="left: 20%; animation-delay: 0s;"></div>
+        <div class="bubble" style="left: 40%; animation-delay: 1s;"></div>
+        <div class="bubble" style="left: 60%; animation-delay: 2s;"></div>
+        <div class="bubble" style="left: 80%; animation-delay: 3s;"></div>
+    </div>
+
+    <div id="failureMessage">
+        <h2>يرجى المحاولة مرة أخرى لا تستلم<br>يرجى الإبتعاد عن والديك مسافة تقدر بعشرة كيلومترات مسافة أمان وحفاظاً على الأرواح</h2>
+    </div>
+
+    <script>
+        const students = [
+            { name: "لؤي محمد الحسين", code: "202304", type: "أدبي", scores: [90, 80, 80, 85, 80, 90], result: "راسب" },
+            { name: "جمال لدينحاج رزوق", code: "202305", type: "شرعي", scores: [92, 78, 70], result: "ناجح" },
+            { name: "سمير محمد غزال", code: "202306", type: "تجاري", scores: [80, 90, 75], result: "ناجح" },
+            { name: "عادل محمد فشتوك", code: "202307", type: "مهنية نسوية", scores: [75, 85, 80], result: "ناجح" },
+            { name: "مصطفى جميل كوريني", code: "202301", type: "تقنيات الحاسوب", scores: [80, 75, 70, 82, 85, 80, 75], result: "ناجح" },
+            { name: "حسام الدين محمد", code: "202308", type: "رياضيات", scores: [60, 55, 58], result: "راسب" },
+        ];
+
+        function searchStudent() {
+            const code = document.getElementById("studentCode").value;
+            const resultBody = document.getElementById("resultBody");
+            const celebration = document.getElementById("celebration");
+            const failureMessage = document.getElementById("failureMessage");
+            const sadFace = document.getElementById("sadFace");
+
+            resultBody.innerHTML = ""; // Clear previous results
+            celebration.style.display = "none"; // Hide celebration message
+            failureMessage.style.display = "none"; // Hide failure message
+            sadFace.style.display = "none"; // Hide sad face
+
+            const student = students.find(s => s.code === code);
+            if (student) {
+                const totalScore = student.scores.reduce((a, b) => a + b, 0);
+                const averageScore = (totalScore / student.scores.length).toFixed(2);
+                const resultClass = student.result === "ناجح" ? "success" : "fail";
+
+                resultBody.innerHTML = `
+                    <tr class="${resultClass}">
+                        <td>${student.name}</td>
+                        <td>${student.code}</td>
+                        <td>${student.type}</td>
+                        <td>${totalScore}</td>
+                        <td>${averageScore}</td>
+                        <td>${student.result}</td>
+                    </tr>
+                `;
+
+                if (student.result === "ناجح") {
+                    celebration.style.display = "block"; // Show celebration message
+                } else {
+                    sadFace.style.display = "inline"; // Show sad face
+                    failureMessage.style.display = "block"; // Show failure message
+                }
+            } else {
+                alert("الطالب غير موجود");
+            }
+        }
+    </script>
+</body>
+</html>
